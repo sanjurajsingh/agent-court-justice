@@ -10,7 +10,7 @@ let writeClient: AnyClient | null = null;
 /** Read-only client (view methods, tx queries). No wallet required. */
 export function getReadClient(): AnyClient {
   if (!readClient) {
-    readClient = createClient({ chain: CHAIN }) as AnyClient;
+    readClient = createClient({ chain: CHAIN } as never) as AnyClient;
   }
   return readClient;
 }
@@ -24,7 +24,7 @@ export async function getWalletClient(): Promise<AnyClient> {
   const ethereum = (globalThis as { ethereum?: unknown }).ethereum;
   if (!ethereum) throw new Error("No wallet found. Install MetaMask to use AgentCourt.");
   if (!writeClient) {
-    writeClient = createClient({ chain: CHAIN, account: undefined }) as AnyClient;
+    writeClient = createClient({ chain: CHAIN } as never) as AnyClient;
   }
   await writeClient.initializeConsensusSmartContract();
   return writeClient;
@@ -38,5 +38,6 @@ export function createEphemeralAccount(): Account {
 export async function connectWallet(): Promise<string> {
   const client = await getWalletClient();
   const [address] = await client.requestAddresses();
+  if (!address) throw new Error("Wallet returned no account.");
   return address;
 }
