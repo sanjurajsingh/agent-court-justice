@@ -1,0 +1,27 @@
+networks:
+  default: localnet
+  localnet:
+    url: http://127.0.0.1:4000/api
+    accounts:
+      - "0x0000000000000000000000000000000000000000000000000000000000000001"
+      - "0x0000000000000000000000000000000000000000000000000000000000000002"
+      - "0x0000000000000000000000000000000000000000000000000000000000000003"
+      - "0x0000000000000000000000000000000000000000000000000000000000000004"
+    leader_only: false
+  studionet:
+    url: https://studio.genlayer.com/api
+    from: ${ACCOUNT_ADDRESS}
+    accounts:
+      - ${ACCOUNT_PRIVATE_KEY}
+  testnet_asimov:
+    url: https://genlayer-testnet.rpc.caldera.xyz/http
+    from: ${ACCOUNT_ADDRESS}
+    accounts:
+      - ${ACCOUNT_PRIVATE_KEY}
+
+paths:
+  contracts: contracts
+  artifacts: artifacts
+
+default_wait_interval: 3000
+default_wait_retries: 40
