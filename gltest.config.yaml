@@ -22,6 +22,3 @@ networks:
 paths:
   contracts: contracts
   artifacts: artifacts
-
-default_wait_interval: 3000
-default_wait_retries: 40
