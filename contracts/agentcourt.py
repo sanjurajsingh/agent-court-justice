@@ -11,6 +11,7 @@ services may only store files/metadata; they never decide outcomes.
 
 import json
 import typing
+from dataclasses import dataclass
 
 from genlayer import *
 
