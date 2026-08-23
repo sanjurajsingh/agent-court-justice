@@ -103,6 +103,7 @@ class _Payee:
 # ---------------------------------------------------------------------------
 
 
+@allow_storage
 class AgentCourt(gl.Contract):
     agreements: TreeMap[u256, Agreement]
     by_party: TreeMap[Address, DynArray[u256]]
