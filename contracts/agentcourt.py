@@ -11,6 +11,7 @@ services may only store files/metadata; they never decide outcomes.
 
 import json
 import typing
+from dataclasses import dataclass
 
 from genlayer import *
 
@@ -102,6 +103,7 @@ class _Payee:
 # ---------------------------------------------------------------------------
 
 
+@allow_storage
 class AgentCourt(gl.Contract):
     agreements: TreeMap[u256, Agreement]
     by_party: TreeMap[Address, DynArray[u256]]
