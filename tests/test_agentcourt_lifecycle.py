@@ -16,7 +16,7 @@ from conftest import (
 
 def test_create_agreement(court, client_account, provider_account):
     receipt = court.connect(client_account).create_agreement(
-        args=[provider_account.address, TERMS, CRITERIA, str(AMOUNT)]
+        args=[provider_account.address, TERMS, CRITERIA, AMOUNT]
     ).transact()
     assert tx_execution_succeeded(receipt)
 
@@ -34,7 +34,7 @@ def test_create_agreement(court, client_account, provider_account):
 def test_create_agreement_rejects_self_dealing_and_zero_amount(court, client_account):
     assert tx_execution_failed(
         court.connect(client_account)
-        .create_agreement(args=[client_account.address, TERMS, CRITERIA, str(AMOUNT)])
+        .create_agreement(args=[client_account.address, TERMS, CRITERIA, AMOUNT])
         .transact()
     )
 

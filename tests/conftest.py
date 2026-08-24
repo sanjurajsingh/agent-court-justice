@@ -111,7 +111,7 @@ def new_agreement(court, client_account, provider_account, amount: int = AMOUNT)
     """create + read back the id (next_id - 1)."""
     as_client = court.connect(client_account)
     as_client.create_agreement(
-        args=[provider_account.address, TERMS, CRITERIA, str(amount)]
+        args=[provider_account.address, TERMS, CRITERIA, amount]
     ).transact()
     return int(court.get_next_id(args=[]).call()) - 1
 

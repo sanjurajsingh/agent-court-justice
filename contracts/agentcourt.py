@@ -1,7 +1,7 @@
 # v0.1.0
 # { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 """
-AgentCourt — evidence-based dispute resolution and escrow for
+AgentCourt - evidence-based dispute resolution and escrow for
 human <-> human, human <-> AI agent and AI agent <-> AI agent agreements.
 
 All consensus-critical logic (escrow accounting, adjudication, winner
@@ -131,7 +131,7 @@ class AgentCourt(gl.Contract):
     def _index(self, who: Address, agreement_id: u256) -> None:
         lst = self.by_party.get(who)
         if lst is None:
-            self.by_party[who] = DynArray[u256]()
+            self.by_party[who] = []
         self.by_party[who].append(agreement_id)
 
     def _now(self) -> str:
@@ -183,8 +183,8 @@ class AgentCourt(gl.Contract):
             appellant=Address(bytes(20)),
             settled=False,
             paid_out=u256(0),
-            evidence=DynArray[EvidenceItem](),
-            decisions=DynArray[Decision](),
+            evidence=[],
+            decisions=[],
         )
         self._index(client, agreement_id)
         self._index(provider_addr, agreement_id)
@@ -545,7 +545,7 @@ def _build_case(a) -> str:
         lines.append("PRIOR DECISIONS UNDER APPEAL:")
         for d in a.decisions:
             lines.append(
-                f"- round {int(d.round)}: winner={d.winner}, client_bps={int(d.client_bps)} — {d.reason}"
+                f"- round {int(d.round)}: winner={d.winner}, client_bps={int(d.client_bps)} - {d.reason}"
             )
     return "\n".join(lines)
 
