@@ -1,7 +1,7 @@
 # v0.1.0
 # { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
 """
-AgentCourt — evidence-based dispute resolution and escrow for
+AgentCourt - evidence-based dispute resolution and escrow for
 human <-> human, human <-> AI agent and AI agent <-> AI agent agreements.
 
 All consensus-critical logic (escrow accounting, adjudication, winner
@@ -545,7 +545,7 @@ def _build_case(a) -> str:
         lines.append("PRIOR DECISIONS UNDER APPEAL:")
         for d in a.decisions:
             lines.append(
-                f"- round {int(d.round)}: winner={d.winner}, client_bps={int(d.client_bps)} — {d.reason}"
+                f"- round {int(d.round)}: winner={d.winner}, client_bps={int(d.client_bps)} - {d.reason}"
             )
     return "\n".join(lines)
 
