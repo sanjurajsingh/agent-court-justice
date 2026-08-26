@@ -498,9 +498,17 @@ and strictly between 0 and 10000 when winner is SPLIT. Round client_bps to the
 nearest 500 so independent arbitrators converge."""
 
 
-def _parse_verdict(raw: str) -> dict:
-    cleaned = raw.replace("```json", "").replace("```", "").strip()
-    data = json.loads(cleaned)
+def _parse_verdict(raw: typing.Any) -> dict:
+    # The runtime hands back a str for plain prompts and an already decoded
+    # object when the provider answers with structured JSON. Accept both.
+    if isinstance(raw, dict):
+        data = raw
+    else:
+        cleaned = str(raw).replace("```json", "").replace("```", "").strip()
+        data = json.loads(cleaned)
+    if not isinstance(data, dict):
+        raise gl.vm.UserError("verdict is not a JSON object")
+
     winner = str(data["winner"]).upper()
     if winner not in (PARTY_CLIENT, PARTY_PROVIDER, PARTY_SPLIT):
         raise gl.vm.UserError("invalid winner in verdict")
