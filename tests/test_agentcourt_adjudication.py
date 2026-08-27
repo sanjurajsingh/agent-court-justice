@@ -1,6 +1,8 @@
 """Dispute opening, consensus adjudication and Equivalence Principle behaviour."""
 
+from genlayer_py.exceptions import GenLayerError
 from gltest.assertions import tx_execution_succeeded, tx_execution_failed
+
 
 from conftest import (
     AMOUNT,
@@ -159,14 +161,21 @@ def test_validator_disagreement_blocks_the_verdict(court, client_account, provid
             verdict("PROVIDER", 0),
         ]
     )
-    receipt = court.connect(client_account).adjudicate(args=[aid]).transact(
-        transaction_context=ctx(validators)
-    )
-    assert tx_execution_failed(receipt)
+    # No consensus: the transaction is never accepted. Depending on the node
+    # this surfaces either as a failed receipt or as a client-side error.
+    try:
+        receipt = court.connect(client_account).adjudicate(args=[aid]).transact(
+            transaction_context=ctx(validators)
+        )
+        assert tx_execution_failed(receipt)
+    except GenLayerError:
+        pass
+
     a = agreement(court, aid)
     assert a["status"] == "DISPUTED"
     assert a["decisions"] == []
     assert int(court.get_escrow_balance(args=[]).call()) == AMOUNT
+
 
 
 def test_split_within_tolerance_still_reaches_consensus(court, client_account, provider_account):
