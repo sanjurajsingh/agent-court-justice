@@ -1,6 +1,8 @@
 """Dispute opening, consensus adjudication and Equivalence Principle behaviour."""
 
+from genlayer_py.exceptions import GenLayerError
 from gltest.assertions import tx_execution_succeeded, tx_execution_failed
+
 
 from conftest import (
     AMOUNT,
