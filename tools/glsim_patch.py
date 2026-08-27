@@ -309,6 +309,23 @@ def patch_consensus(pkg: Path) -> None:
         all_agree = True""" % MARKER
     assert old in s
     s = s.replace(old, new)
+    # Rollback must mutate the *existing* storage managers: contract instances
+    # captured their manager at construction, so swapping the dict entry leaves
+    # rejected state visible (a failed consensus otherwise "commits").
+    old = """    engine._storages = snap["storages"]"""
+    new = """    for _addr, _mgr in engine._storages.items():
+        _snap_mgr = snap["storages"].get(_addr)
+        _snap_parts = getattr(_snap_mgr, "_parts", {}) if _snap_mgr else {}
+        for _sid, (_slot, _mem) in list(_mgr._parts.items()):
+            _saved = _snap_parts.get(_sid)
+            _mem[:] = bytes(_saved[1]) if _saved else b""
+        for _sid, _saved in _snap_parts.items():
+            if _sid not in _mgr._parts:
+                _mgr.get_store_slot(_sid)
+                _mgr._parts[_sid][1][:] = bytes(_saved[1])"""
+    assert old in s
+    s = s.replace(old, new)
+
     old = """        votes.append("agree" if all_agree else "disagree")
     return votes"""
     new = """        votes.append("agree" if all_agree else "disagree")
