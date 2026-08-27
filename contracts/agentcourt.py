@@ -89,15 +89,6 @@ class Agreement:
     decisions: DynArray[Decision]
 
 
-@gl.evm.contract_interface
-class _Payee:
-    class View:
-        pass
-
-    class Write:
-        pass
-
-
 # ---------------------------------------------------------------------------
 # Contract
 # ---------------------------------------------------------------------------
@@ -142,7 +133,7 @@ class AgentCourt(gl.Contract):
             return
         if amount > self.balance:
             raise gl.vm.UserError("insufficient contract balance")
-        _Payee(to).emit_transfer(value=amount)
+        gl.get_contract_at(to).emit_transfer(value=amount)
 
     # -- lifecycle: creation & escrow --------------------------------------
 
