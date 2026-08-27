@@ -252,7 +252,71 @@ def patch_server(pkg: Path) -> None:
     old = """            result, _ = engine.call_from_calldata(recipient, calldata_bytes, sender)"""
     new = """            result, _ = engine.call_from_calldata(recipient, calldata_bytes, sender, value=eth_tx.get("value", 0))"""
     assert old in s
-    p.write_text(s.replace(old, new))
+    s = s.replace(old, new)
+
+    # 4. keep per-validator LLM mocks so the Equivalence Principle can be
+    #    exercised with validators that answer differently. Upstream only
+    #    installs validators[0]'s mocks and applies them to everyone.
+    old = """    # LLM mocks
+    llm_mocks = pc.get("mock_response", {}).get("response", {})
+    for prompt_key, response_text in llm_mocks.items():
+        engine.vm.mock_llm(prompt_key, response_text)"""
+    new = """    # LLM mocks
+    llm_mocks = pc.get("mock_response", {}).get("response", {})
+    for prompt_key, response_text in llm_mocks.items():
+        engine.vm.mock_llm(prompt_key, response_text)
+    per_validator = []
+    for v in validators:
+        vpc = v.get("plugin_config", {}) or {}
+        vmocks = (vpc.get("mock_response", {}) or {}).get("response", {}) or {}
+        per_validator.append(
+            [(re.compile(k), r) for k, r in vmocks.items()]
+        )
+    engine.vm._per_validator_llm_mocks = per_validator"""
+    assert old in s
+    s = s.replace(old, new)
+
+    old = """    engine.vm._llm_mocks.clear()
+    engine.vm._llm_mocks_hit.clear()"""
+    new = """    engine.vm._llm_mocks.clear()
+    engine.vm._llm_mocks_hit.clear()
+    engine.vm._per_validator_llm_mocks = []"""
+    assert old in s
+    s = s.replace(old, new)
+    p.write_text(s)
+
+
+def patch_consensus(pkg: Path) -> None:
+    p = pkg / "consensus.py"
+    s = p.read_text()
+    if MARKER in s:
+        return
+    old = """    votes = []
+    for _ in range(num_validators):
+        all_agree = True"""
+    new = """    %s
+    # Each validator re-runs the nondet block against *its own* mocked LLM
+    # answer when the test provided one, so disagreement can be simulated.
+    per_validator = getattr(vm, "_per_validator_llm_mocks", None) or []
+    original_mocks = list(vm._llm_mocks)
+
+    votes = []
+    for _idx in range(num_validators):
+        if _idx < len(per_validator) and per_validator[_idx]:
+            vm._llm_mocks = list(per_validator[_idx])
+        else:
+            vm._llm_mocks = list(original_mocks)
+        all_agree = True""" % MARKER
+    assert old in s
+    s = s.replace(old, new)
+    old = """        votes.append("agree" if all_agree else "disagree")
+    return votes"""
+    new = """        votes.append("agree" if all_agree else "disagree")
+    vm._llm_mocks = original_mocks
+    return votes"""
+    assert old in s
+    s = s.replace(old, new)
+    p.write_text(s)
 
 
 def main() -> None:
@@ -264,6 +328,7 @@ def main() -> None:
     patch_state(pkg)
     patch_engine(pkg)
     patch_server(pkg)
+    patch_consensus(pkg)
     print(f"glsim patched at {pkg}")
 
 
