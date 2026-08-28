@@ -121,3 +121,26 @@ export const appeal = (id: number, grounds: string, bondWei: bigint) =>
   write("appeal", [id, grounds], bondWei);
 
 export const settle = (id: number) => write("settle", [id]);
+
+export const getNextId = () => read<string | number | bigint>("get_next_id");
+
+export const APPEAL_BOND_BPS = 1000;
+export const BPS = 10000;
+
+/** Bond required to appeal: 10% of the escrowed amount. */
+export function appealBondWei(amountWei: bigint): bigint {
+  return (amountWei * BigInt(APPEAL_BOND_BPS)) / BigInt(BPS);
+}
+
+/**
+ * The contract has no global enumeration view, so the full list is rebuilt by
+ * reading ids 1..next_id-1 straight from the contract. No cache, no backend.
+ */
+export async function listAgreements(): Promise<Agreement[]> {
+  const next = Number(await getNextId());
+  const ids = Array.from({ length: Math.max(0, next - 1) }, (_, i) => i + 1);
+  const results = await Promise.all(
+    ids.map((id) => getAgreement(id).catch(() => null)),
+  );
+  return results.filter((a): a is Agreement => a !== null).reverse();
+}
