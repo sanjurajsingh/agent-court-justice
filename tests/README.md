@@ -1,20 +1,17 @@
 # AgentCourt contract tests
 
-Requires a running GenLayer Localnet (Docker) — start it first:
+No Docker required — the suite runs against **GLSim** (`genlayer-test[sim]`),
+a local JSON-RPC node on `http://127.0.0.1:4000/api`.
 
 ```bash
-genlayer up          # localnet on http://127.0.0.1:4000/api
-gltest               # run all 48 tests
-gltest tests/test_agentcourt_adjudication.py -v
+./scripts/run-contract-tests.sh            # setup + GLSim (5 validators) + all tests
+./scripts/run-contract-tests.sh tests/test_agentcourt_settlement.py -v
 ```
 
-Lint / validate / typecheck the contract (GenLayer CLI toolchain):
-
-```bash
-genvm-lint check contracts/agentcourt.py
-genvm-lint validate contracts/agentcourt.py
-genvm-lint typecheck contracts/agentcourt.py
-```
+The script installs `genlayer-test[sim]` into `~/glenv`, applies
+`tools/glsim_patch.py` (GLSim gaps: native value plumbing, `emit_transfer`
+payouts, contract-class cache, per-validator LLM mocks, in-place storage
+rollback on failed consensus), starts GLSim and runs `gltest`.
 
 Suites:
 
@@ -25,3 +22,7 @@ Suites:
 
 Only validator LLM output is mocked (`mock_llm_response`); all escrow accounting
 and payouts are executed by the real contract and asserted against on-chain balances.
+
+`genvm-lint` is not published to PyPI and is not installable in this
+environment; the contract is validated by `py_compile` plus real deployment and
+schema extraction on every test run.
