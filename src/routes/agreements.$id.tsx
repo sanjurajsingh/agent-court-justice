@@ -23,7 +23,6 @@ import {
   getAgreement,
   getEvidence,
   settle,
-  type Agreement,
   type EvidenceItem,
 } from "@/lib/genlayer/agentcourt";
 import {
@@ -275,7 +274,7 @@ function AgreementDetail() {
 
               {isProvider && (a.status === "FUNDED" || a.status === "DELIVERED") && (
                 <Button asChild variant="outline" className="w-full">
-                  <Link to="/agreements/$id/deliver" params={{ id: String(a.id) }}>
+                  <Link to="/deliver/$id" params={{ id: String(a.id) }}>
                     <Upload className="size-4" /> Submit deliverable
                   </Link>
                 </Button>
@@ -294,7 +293,7 @@ function AgreementDetail() {
               {(isClient || isProvider) &&
                 (a.status === "FUNDED" || a.status === "DELIVERED") && (
                   <Button asChild variant="destructive" className="w-full">
-                    <Link to="/agreements/$id/dispute" params={{ id: String(a.id) }}>
+                    <Link to="/dispute/$id" params={{ id: String(a.id) }}>
                       <ShieldAlert className="size-4" /> Open dispute
                     </Link>
                   </Button>
@@ -303,7 +302,7 @@ function AgreementDetail() {
               {(a.status === "DISPUTED" || a.status === "APPEALED") && (
                 <>
                   <Button asChild variant="outline" className="w-full">
-                    <Link to="/agreements/$id/dispute" params={{ id: String(a.id) }}>
+                    <Link to="/dispute/$id" params={{ id: String(a.id) }}>
                       Submit evidence
                     </Link>
                   </Button>
@@ -419,5 +418,3 @@ function Panel({
     </section>
   );
 }
-
-export type { Agreement };

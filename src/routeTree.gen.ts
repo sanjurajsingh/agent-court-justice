@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as AgreementsIndexRouteImport } from './routes/agreements.index'
+import { Route as AgreementsIdRouteImport } from './routes/agreements.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,34 +29,43 @@ const AgreementsIndexRoute = AgreementsIndexRouteImport.update({
   path: '/agreements/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgreementsIdRoute = AgreementsIdRouteImport.update({
+  id: '/agreements/$id',
+  path: '/agreements/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/agreements/$id': typeof AgreementsIdRoute
   '/agreements/': typeof AgreementsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/agreements/$id': typeof AgreementsIdRoute
   '/agreements': typeof AgreementsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/agreements/$id': typeof AgreementsIdRoute
   '/agreements/': typeof AgreementsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create' | '/agreements/'
+  fullPaths: '/' | '/create' | '/agreements/$id' | '/agreements/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create' | '/agreements'
-  id: '__root__' | '/' | '/create' | '/agreements/'
+  to: '/' | '/create' | '/agreements/$id' | '/agreements'
+  id: '__root__' | '/' | '/create' | '/agreements/$id' | '/agreements/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateRoute: typeof CreateRoute
+  AgreementsIdRoute: typeof AgreementsIdRoute
   AgreementsIndexRoute: typeof AgreementsIndexRoute
 }
 
@@ -82,12 +92,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgreementsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agreements/$id': {
+      id: '/agreements/$id'
+      path: '/agreements/$id'
+      fullPath: '/agreements/$id'
+      preLoaderRoute: typeof AgreementsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateRoute: CreateRoute,
+  AgreementsIdRoute: AgreementsIdRoute,
   AgreementsIndexRoute: AgreementsIndexRoute,
 }
 export const routeTree = rootRouteImport
