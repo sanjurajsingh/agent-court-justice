@@ -11,8 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CreateRouteImport } from './routes/create'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AgreementsIndexRouteImport } from './routes/agreements.index'
 import { Route as AgreementsIdRouteImport } from './routes/agreements.$id'
+import { Route as DeliverIdRouteImport } from './routes/deliver.$id'
+import { Route as DisputeIdRouteImport } from './routes/dispute.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgreementsIndexRoute = AgreementsIndexRouteImport.update({
@@ -34,38 +42,82 @@ const AgreementsIdRoute = AgreementsIdRouteImport.update({
   path: '/agreements/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DeliverIdRoute = DeliverIdRouteImport.update({
+  id: '/deliver/$id',
+  path: '/deliver/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DisputeIdRoute = DisputeIdRouteImport.update({
+  id: '/dispute/$id',
+  path: '/dispute/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/dashboard': typeof DashboardRoute
   '/agreements/$id': typeof AgreementsIdRoute
+  '/deliver/$id': typeof DeliverIdRoute
+  '/dispute/$id': typeof DisputeIdRoute
   '/agreements/': typeof AgreementsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/dashboard': typeof DashboardRoute
   '/agreements/$id': typeof AgreementsIdRoute
+  '/deliver/$id': typeof DeliverIdRoute
+  '/dispute/$id': typeof DisputeIdRoute
   '/agreements': typeof AgreementsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
+  '/dashboard': typeof DashboardRoute
   '/agreements/$id': typeof AgreementsIdRoute
+  '/deliver/$id': typeof DeliverIdRoute
+  '/dispute/$id': typeof DisputeIdRoute
   '/agreements/': typeof AgreementsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/create' | '/agreements/$id' | '/agreements/'
+  fullPaths:
+    | '/'
+    | '/create'
+    | '/dashboard'
+    | '/agreements/$id'
+    | '/deliver/$id'
+    | '/dispute/$id'
+    | '/agreements/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create' | '/agreements/$id' | '/agreements'
-  id: '__root__' | '/' | '/create' | '/agreements/$id' | '/agreements/'
+  to:
+    | '/'
+    | '/create'
+    | '/dashboard'
+    | '/agreements/$id'
+    | '/deliver/$id'
+    | '/dispute/$id'
+    | '/agreements'
+  id:
+    | '__root__'
+    | '/'
+    | '/create'
+    | '/dashboard'
+    | '/agreements/$id'
+    | '/deliver/$id'
+    | '/dispute/$id'
+    | '/agreements/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateRoute: typeof CreateRoute
+  DashboardRoute: typeof DashboardRoute
   AgreementsIdRoute: typeof AgreementsIdRoute
+  DeliverIdRoute: typeof DeliverIdRoute
+  DisputeIdRoute: typeof DisputeIdRoute
   AgreementsIndexRoute: typeof AgreementsIndexRoute
 }
 
@@ -85,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CreateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agreements/': {
       id: '/agreements/'
       path: '/agreements'
@@ -99,13 +158,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgreementsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/deliver/$id': {
+      id: '/deliver/$id'
+      path: '/deliver/$id'
+      fullPath: '/deliver/$id'
+      preLoaderRoute: typeof DeliverIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dispute/$id': {
+      id: '/dispute/$id'
+      path: '/dispute/$id'
+      fullPath: '/dispute/$id'
+      preLoaderRoute: typeof DisputeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateRoute: CreateRoute,
+  DashboardRoute: DashboardRoute,
   AgreementsIdRoute: AgreementsIdRoute,
+  DeliverIdRoute: DeliverIdRoute,
+  DisputeIdRoute: DisputeIdRoute,
   AgreementsIndexRoute: AgreementsIndexRoute,
 }
 export const routeTree = rootRouteImport
