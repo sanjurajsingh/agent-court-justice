@@ -97,7 +97,8 @@ export const createAgreement = (p: {
   acceptanceCriteria: string;
   amountWei: bigint;
 }) =>
-  write("create_agreement", [p.provider, p.terms, p.acceptanceCriteria, p.amountWei.toString()]);
+  // The live schema types `amount` as int, so the wei value is passed as a bigint.
+  write("create_agreement", [p.provider, p.terms, p.acceptanceCriteria, p.amountWei]);
 
 export const fundEscrow = (id: number, amountWei: bigint) =>
   write("fund_escrow", [id], amountWei);

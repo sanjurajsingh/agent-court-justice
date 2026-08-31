@@ -15,8 +15,14 @@ export const NETWORK: NetworkName =
 
 export const CHAIN: GenLayerChain = CHAINS[NETWORK] ?? testnetAsimov;
 
-/** Deployed AgentCourt Intelligent Contract address. */
-export const AGENTCOURT_ADDRESS = (import.meta.env["VITE_AGENTCOURT_ADDRESS"] ?? "") as string;
+/**
+ * Deployed AgentCourt Intelligent Contract address.
+ * Configured purely through env: VITE_AGENTCOURT_CONTRACT_ADDRESS (preferred)
+ * or the legacy VITE_AGENTCOURT_ADDRESS. Never hardcoded into contract calls.
+ */
+export const AGENTCOURT_ADDRESS = ((import.meta.env["VITE_AGENTCOURT_CONTRACT_ADDRESS"] ??
+  import.meta.env["VITE_AGENTCOURT_ADDRESS"] ??
+  "") as string).trim();
 
 /** 1 GEN = 10^18 wei. */
 export const GEN_DECIMALS = 18n;
