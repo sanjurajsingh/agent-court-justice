@@ -54,7 +54,7 @@ export interface Agreement {
 
 function contractAddress(): `0x${string}` {
   if (!AGENTCOURT_ADDRESS) {
-    throw new Error("VITE_AGENTCOURT_ADDRESS is not set — deploy contracts/agentcourt.py first.");
+    throw new Error("VITE_AGENTCOURT_ADDRESS is not set. Deploy contracts/agentcourt.py first.");
   }
   return AGENTCOURT_ADDRESS as `0x${string}`;
 }
