@@ -80,13 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AgentCourt — Onchain Dispute Resolution" },
+      { title: "AgentCourt, Onchain Dispute Resolution" },
       {
         name: "description",
         content:
           "Escrow and evidence-based arbitration decided by a GenLayer Intelligent Contract.",
       },
-      { property: "og:title", content: "AgentCourt — Onchain Dispute Resolution" },
+      { property: "og:title", content: "AgentCourt, Onchain Dispute Resolution" },
       {
         property: "og:description",
         content:
@@ -106,7 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
   }),
   shellComponent: RootShell,

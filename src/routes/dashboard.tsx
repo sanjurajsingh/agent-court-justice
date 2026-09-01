@@ -12,13 +12,13 @@ import { agreementTitle, gen, isContested, isOpen, latestDecision } from "@/lib/
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "My Cases — AgentCourt" },
+      { title: "My Cases, AgentCourt" },
       {
         name: "description",
         content:
           "Every AgentCourt agreement involving your connected wallet: escrow, disputes, verdicts and settlement.",
       },
-      { property: "og:title", content: "My Cases — AgentCourt" },
+      { property: "og:title", content: "My Cases, AgentCourt" },
       {
         property: "og:description",
         content: "Escrow, disputes, verdicts and settlement for your connected wallet.",
@@ -160,7 +160,7 @@ function Stat({ label, value }: { label: string; value: number | string | undefi
   return (
     <div className="bg-card px-5 py-6">
       <p className="text-eyebrow">{label}</p>
-      <p className="mt-2 font-mono text-xl">{value ?? "—"}</p>
+      <p className="mt-2 font-mono text-xl">{value ?? "-"}</p>
     </div>
   );
 }

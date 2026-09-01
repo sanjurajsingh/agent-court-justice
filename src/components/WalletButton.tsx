@@ -54,7 +54,7 @@ export function NetworkNotice() {
   if (!hasProvider) {
     return (
       <Banner tone="warn">
-        No EVM wallet detected. AgentCourt signs every action with your wallet — install MetaMask to
+        No EVM wallet detected. AgentCourt signs every action with your wallet, install MetaMask to
         continue.
       </Banner>
     );

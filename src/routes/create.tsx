@@ -19,13 +19,13 @@ import { encodeTerms } from "@/lib/agreement-utils";
 export const Route = createFileRoute("/create")({
   head: () => ({
     meta: [
-      { title: "Create Agreement — AgentCourt" },
+      { title: "Create Agreement, AgentCourt" },
       {
         name: "description",
         content:
           "Record terms, acceptance criteria and a native GEN escrow in the AgentCourt Intelligent Contract.",
       },
-      { property: "og:title", content: "Create Agreement — AgentCourt" },
+      { property: "og:title", content: "Create Agreement, AgentCourt" },
       {
         property: "og:description",
         content: "Record terms, acceptance criteria and a native GEN escrow on GenLayer.",
@@ -101,7 +101,7 @@ function CreatePage() {
       <h1 className="mt-3 text-4xl">Create an agreement</h1>
       <p className="mt-3 text-muted-foreground">
         Step 1 writes the agreement to the Intelligent Contract. Step 2 escrows native GEN. Both are
-        signed by your wallet — AgentCourt holds no session and no custody.
+        signed by your wallet, AgentCourt holds no session and no custody.
       </p>
 
       <div className="mt-8">
@@ -111,7 +111,7 @@ function CreatePage() {
 
       <div className="panel space-y-6 p-6">
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Party A — client (you)">
+          <Field label="Party A, client (you)">
             <Input
               value={address ?? ""}
               readOnly
@@ -122,7 +122,7 @@ function CreatePage() {
               The connected wallet is recorded as the paying party by the contract.
             </p>
           </Field>
-          <Field label="Party B — provider wallet">
+          <Field label="Party B, provider wallet">
             <Input
               value={provider}
               onChange={(e) => setProvider(e.target.value)}
@@ -139,7 +139,7 @@ function CreatePage() {
             placeholder="REST API delivery for Q3 integration"
           />
           <p className="mt-1.5 text-xs text-muted-foreground">
-            Stored on-chain as the first line of the terms — validators read it too.
+            Stored on-chain as the first line of the terms, validators read it too.
           </p>
         </Field>
 

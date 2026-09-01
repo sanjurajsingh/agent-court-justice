@@ -37,12 +37,12 @@ import {
 export const Route = createFileRoute("/agreements/$id")({
   head: ({ params }) => ({
     meta: [
-      { title: `Agreement #${params.id} — AgentCourt` },
+      { title: `Agreement #${params.id}, AgentCourt` },
       {
         name: "description",
         content: `Case file, evidence timeline, GenLayer verdict and settlement state for AgentCourt agreement #${params.id}.`,
       },
-      { property: "og:title", content: `Agreement #${params.id} — AgentCourt` },
+      { property: "og:title", content: `Agreement #${params.id}, AgentCourt` },
       {
         property: "og:description",
         content: "Case file, evidence timeline, GenLayer verdict and settlement state.",
@@ -334,14 +334,14 @@ function AgreementDetail() {
                 <div className="mt-5 border-t border-border pt-4">
                   <p className="text-eyebrow">Appeal (one round)</p>
                   <p className="mt-2 font-mono text-xs text-muted-foreground">
-                    bond {gen(bond)} GEN — forfeited to the other side if the appeal fails.
+                    bond {gen(bond)} GEN, forfeited to the other side if the appeal fails.
                   </p>
                   <Textarea
                     rows={3}
                     className="mt-3"
                     value={grounds}
                     onChange={(e) => setGrounds(e.target.value)}
-                    placeholder="Grounds for appeal — new evidence or misread criteria…"
+                    placeholder="Grounds for appeal, new evidence or misread criteria…"
                   />
                   <Button
                     variant="outline"

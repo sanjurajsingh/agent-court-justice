@@ -43,7 +43,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-border py-8">
       <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
-        <p>AgentCourt — evidence-based dispute resolution for the agent economy.</p>
+        <p>AgentCourt, evidence-based dispute resolution for the agent economy.</p>
         <p className="font-mono">
           Judgments are produced by a GenLayer Intelligent Contract. No off-chain arbiter.
         </p>
