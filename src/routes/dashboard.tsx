@@ -160,7 +160,7 @@ function Stat({ label, value }: { label: string; value: number | string | undefi
   return (
     <div className="bg-card px-5 py-6">
       <p className="text-eyebrow">{label}</p>
-      <p className="mt-2 font-mono text-xl">{value ?? "—"}</p>
+      <p className="mt-2 font-mono text-xl">{value ?? "-"}</p>
     </div>
   );
 }

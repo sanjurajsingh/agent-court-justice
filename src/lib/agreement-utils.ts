@@ -60,9 +60,9 @@ export const STATUS_COPY: Record<AgreementStatus, string> = {
   CREATED: "Awaiting escrow funding",
   FUNDED: "Escrow held by the contract",
   DELIVERED: "Deliverable submitted, awaiting client",
-  DISPUTED: "Dispute open — evidence phase",
+  DISPUTED: "Dispute open, evidence phase",
   ADJUDICATED: "Verdict returned by GenLayer consensus",
-  APPEALED: "Appeal filed — re-adjudication pending",
+  APPEALED: "Appeal filed, re-adjudication pending",
   SETTLED: "Escrow paid out on-chain",
   CANCELLED: "Cancelled before funding",
 };

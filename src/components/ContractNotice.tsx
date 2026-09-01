@@ -12,7 +12,7 @@ export function ContractNotice() {
       <p className="mt-1 text-dispute/90">
         Deploy <code className="font-mono">contracts/agentcourt.py</code> to {NETWORK} and set{" "}
         <code className="font-mono">VITE_AGENTCOURT_ADDRESS</code>. Until then no agreement data can
-        be read — AgentCourt never substitutes placeholder state.
+        be read, AgentCourt never substitutes placeholder state.
       </p>
     </div>
   );

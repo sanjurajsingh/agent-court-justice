@@ -232,7 +232,7 @@ function DisputePage() {
           />
           {a && a.decisions.length > 0 && (
             <p className="mt-4 text-sm text-brass">
-              Latest verdict: {a.decisions[a.decisions.length - 1]!.winner} —{" "}
+              Latest verdict: {a.decisions[a.decisions.length - 1]!.winner}: {" "}
               <Link to="/agreements/$id" params={{ id }} className="underline">
                 view full decision
               </Link>
