@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Scale } from "lucide-react";
 
+import logoAsset from "@/assets/agentcourt-logo.png.asset.json";
 import { WalletButton } from "./WalletButton";
 
 const NAV = [
@@ -14,9 +14,11 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-5">
         <Link to="/" className="flex items-center gap-2.5">
-          <span className="flex size-8 items-center justify-center rounded-md border border-brass/40 bg-brass/10">
-            <Scale className="size-4 text-brass" />
-          </span>
+          <img
+            src={logoAsset.url}
+            alt="AgentCourt logo"
+            className="size-8 rounded-md border border-brass/40"
+          />
           <span className="font-display text-lg leading-none tracking-tight">AgentCourt</span>
         </Link>
 
