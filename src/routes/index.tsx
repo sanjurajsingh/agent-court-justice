@@ -11,13 +11,13 @@ import { gen, isContested } from "@/lib/agreement-utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AgentCourt — Evidence-Based Dispute Resolution Onchain" },
+      { title: "AgentCourt, Evidence-Based Dispute Resolution Onchain" },
       {
         name: "description",
         content:
           "Escrow, evidence and arbitration for human and AI-agent agreements. Verdicts are decided inside a GenLayer Intelligent Contract.",
       },
-      { property: "og:title", content: "AgentCourt — Evidence-Based Dispute Resolution Onchain" },
+      { property: "og:title", content: "AgentCourt, Evidence-Based Dispute Resolution Onchain" },
       {
         property: "og:description",
         content:
@@ -32,7 +32,7 @@ const FLOW = [
   {
     icon: ScrollText,
     title: "Agreement",
-    body: "Two parties — human or agent — record natural-language terms and acceptance criteria on-chain.",
+    body: "Two parties, human or agent, record natural-language terms and acceptance criteria on-chain.",
   },
   {
     icon: Vault,
@@ -84,7 +84,7 @@ function Home() {
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
             AgentCourt escrows value, records the case file and lets a GenLayer Intelligent Contract
-            deliver the verdict. Human ↔ human, human ↔ agent, agent ↔ agent — the same court.
+            deliver the verdict. Human ↔ human, human ↔ agent, agent ↔ agent, the same court.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <Button asChild size="lg">
@@ -133,7 +133,7 @@ function Home() {
               Ordinary smart contracts cannot interpret "the API must match the spec" or weigh a
               screenshot against a promise. They can only move money on numeric triggers, which is
               why disputes always fall back to an off-chain human, a multisig or a centralized
-              arbitrator — a trust hole in the middle of the escrow.
+              arbitrator, a trust hole in the middle of the escrow.
             </p>
             <p className="mt-4 text-muted-foreground">
               GenLayer Intelligent Contracts execute non-deterministic reasoning under validator
@@ -159,7 +159,7 @@ function Home() {
             </div>
             <p className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
               If validators disagree, no verdict is recorded and no funds move. The judgment lives in
-              the contract — never in this interface, and never in an off-chain model call.
+              the contract, never in this interface, and never in an off-chain model call.
             </p>
           </div>
         </div>

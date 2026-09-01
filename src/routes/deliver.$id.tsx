@@ -18,13 +18,13 @@ import { agreementTitle, sameAddress } from "@/lib/agreement-utils";
 export const Route = createFileRoute("/deliver/$id")({
   head: ({ params }) => ({
     meta: [
-      { title: `Submit Deliverable — Agreement #${params.id} — AgentCourt` },
+      { title: `Submit Deliverable, Agreement #${params.id}, AgentCourt` },
       {
         name: "description",
         content:
           "Providers record the deliverable URI and statement directly in the AgentCourt Intelligent Contract.",
       },
-      { property: "og:title", content: `Submit Deliverable — Agreement #${params.id}` },
+      { property: "og:title", content: `Submit Deliverable, Agreement #${params.id}` },
       {
         property: "og:description",
         content: "Record the deliverable URI and statement on-chain for validators to review.",

@@ -80,13 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AgentCourt — Onchain Dispute Resolution" },
+      { title: "AgentCourt, Onchain Dispute Resolution" },
       {
         name: "description",
         content:
           "Escrow and evidence-based arbitration decided by a GenLayer Intelligent Contract.",
       },
-      { property: "og:title", content: "AgentCourt — Onchain Dispute Resolution" },
+      { property: "og:title", content: "AgentCourt, Onchain Dispute Resolution" },
       {
         property: "og:description",
         content:

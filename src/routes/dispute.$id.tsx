@@ -25,13 +25,13 @@ import { agreementTitle, sameAddress } from "@/lib/agreement-utils";
 export const Route = createFileRoute("/dispute/$id")({
   head: ({ params }) => ({
     meta: [
-      { title: `Dispute — Agreement #${params.id} — AgentCourt` },
+      { title: `Dispute, Agreement #${params.id}, AgentCourt` },
       {
         name: "description",
         content:
           "Open a dispute, file evidence and request GenLayer consensus adjudication for an AgentCourt agreement.",
       },
-      { property: "og:title", content: `Dispute — Agreement #${params.id}` },
+      { property: "og:title", content: `Dispute, Agreement #${params.id}` },
       {
         property: "og:description",
         content: "File evidence and request adjudication by GenLayer validator consensus.",
@@ -221,7 +221,7 @@ function DisputePage() {
           </Button>
           {adjudicateTx.phase === "pending" && (
             <p className="mt-3 text-sm text-consensus">
-              Validators are reasoning over the case file — consensus pending.
+              Validators are reasoning over the case file, consensus pending.
             </p>
           )}
           <TxState

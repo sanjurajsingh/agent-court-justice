@@ -13,13 +13,13 @@ import { sameAddress } from "@/lib/agreement-utils";
 export const Route = createFileRoute("/agreements/")({
   head: () => ({
     meta: [
-      { title: "Agreements — AgentCourt" },
+      { title: "Agreements, AgentCourt" },
       {
         name: "description",
         content:
           "Every agreement recorded in the AgentCourt Intelligent Contract, with live escrow, dispute and settlement state.",
       },
-      { property: "og:title", content: "Agreements — AgentCourt" },
+      { property: "og:title", content: "Agreements, AgentCourt" },
       {
         property: "og:description",
         content: "Live escrow, dispute and settlement state read straight from the contract.",
@@ -43,7 +43,7 @@ function AgreementsPage() {
       <h1 className="mt-3 text-4xl">Agreements</h1>
       <p className="mt-3 max-w-2xl text-muted-foreground">
         Read directly from the deployed Intelligent Contract. Nothing on this page is cached
-        business data — if the contract has no agreements, this docket is empty.
+        business data, if the contract has no agreements, this docket is empty.
       </p>
 
       <div className="mt-8">
