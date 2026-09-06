@@ -500,8 +500,8 @@ class AgentCourt(gl.Contract):
 
         snapshot = gl.storage.copy_to_memory(a)
         appeal_round = int(snapshot.appeal_round)
-        header = _case_header(snapshot)
         fence = _fence(snapshot)
+        header = _case_header(snapshot, fence)
         records = [
             {
                 "role": str(e.role),
