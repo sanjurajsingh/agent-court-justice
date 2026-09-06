@@ -16,7 +16,7 @@ from conftest import (
 
 def test_create_agreement(court, client_account, provider_account):
     receipt = court.connect(client_account).create_agreement(
-        args=[provider_account.address, TERMS, CRITERIA, AMOUNT]
+        args=[provider_account.address, TERMS, CRITERIA, AMOUNT, DELIVERY_WINDOW, DISPUTE_WINDOW]
     ).transact()
     assert tx_execution_succeeded(receipt)
 
@@ -118,7 +118,7 @@ def test_cancel_before_funding_only(court, client_account, provider_account):
 def test_submit_deliverable_by_provider(court, client_account, provider_account):
     aid = funded_agreement(court, client_account, provider_account)
     receipt = court.connect(provider_account).submit_deliverable(
-        args=[aid, "ipfs://cid-1", "Delivered all 3 endpoints."]
+        args=[aid, "ipfs://cid-1", "Delivered all 3 endpoints.", ""]
     ).transact()
     assert tx_execution_succeeded(receipt)
 
