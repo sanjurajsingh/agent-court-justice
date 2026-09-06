@@ -9,7 +9,9 @@ deterministic and to exercise the Equivalence Principle (agreement vs.
 disagreement) on purpose.
 """
 
+import hashlib
 import json
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -26,6 +28,11 @@ GEN = 10**18
 AMOUNT = 10**17  # 0.1 GEN escrow used by most tests
 BPS = 10000
 APPEAL_BOND_BPS = 1000
+
+# deadlines (seconds)
+DELIVERY_WINDOW = 7 * 24 * 3600
+DISPUTE_WINDOW = 3 * 24 * 3600
+MIN_WINDOW = 3600
 
 # distinctive substring of _ADJUDICATION_PROMPT used to key the mocked answer
 PROMPT_KEY = "You are an impartial arbitrator"
@@ -45,20 +52,25 @@ def verdict(winner: str, client_bps: int, reason: str = "Decided from the eviden
     return json.dumps({"winner": winner, "client_bps": client_bps, "reason": reason})
 
 
-def mocked_validators(count: int, response: str):
+def mocked_validators(count: int, response: str, web=None):
     """`count` identical validators that all return the same verdict."""
     factory = get_validator_factory()
-    return [
-        v.to_dict()
-        for v in factory.batch_create_mock_validators(
-            count,
-            mock_llm_response={"nondet_exec_prompt": {PROMPT_KEY: response}},
-        )
-    ]
+    kwargs = {"mock_llm_response": {"nondet_exec_prompt": {PROMPT_KEY: response}}}
+    if web is not None:
+        kwargs["mock_web_response"] = {"nondet_web_request": web}
+    return [v.to_dict() for v in factory.batch_create_mock_validators(count, **kwargs)]
+
+
+def web_mock(url: str, body: str, status: int = 200, method: str = "GET") -> dict:
+    return {url: {"method": method, "status": status, "body": body}}
+
+
+def sha256_hex(body: str) -> str:
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
 
 
 def disagreeing_validators(responses):
-    """One validator per response — used to break the Equivalence Principle."""
+    """One validator per response - used to break the Equivalence Principle."""
     factory = get_validator_factory()
     return [
         factory.create_mock_validator(
@@ -68,8 +80,18 @@ def disagreeing_validators(responses):
     ]
 
 
-def ctx(validators):
-    return {"validators": validators}
+def ctx(validators, genvm_datetime: str | None = None):
+    c = {"validators": validators}
+    if genvm_datetime is not None:
+        c["genvm_datetime"] = genvm_datetime
+    return c
+
+
+def at(offset_seconds: int) -> dict:
+    """Transaction context that runs the tx `offset_seconds` from now."""
+    when = datetime.now(timezone.utc) + timedelta(seconds=offset_seconds)
+    return {"genvm_datetime": when.strftime("%Y-%m-%dT%H:%M:%SZ")}
+
 
 
 @pytest.fixture(scope="session")
@@ -107,11 +129,25 @@ def balance_of(account) -> int:
     return get_gl_client().get_balance(account.address)
 
 
-def new_agreement(court, client_account, provider_account, amount: int = AMOUNT) -> int:
+def new_agreement(
+    court,
+    client_account,
+    provider_account,
+    amount: int = AMOUNT,
+    delivery_window: int = DELIVERY_WINDOW,
+    dispute_window: int = DISPUTE_WINDOW,
+) -> int:
     """create + read back the id (next_id - 1)."""
     as_client = court.connect(client_account)
     as_client.create_agreement(
-        args=[provider_account.address, TERMS, CRITERIA, amount]
+        args=[
+            provider_account.address,
+            TERMS,
+            CRITERIA,
+            amount,
+            delivery_window,
+            dispute_window,
+        ]
     ).transact()
     return int(court.get_next_id(args=[]).call()) - 1
 
@@ -125,7 +161,7 @@ def funded_agreement(court, client_account, provider_account, amount: int = AMOU
 def delivered_agreement(court, client_account, provider_account, amount: int = AMOUNT) -> int:
     aid = funded_agreement(court, client_account, provider_account, amount)
     court.connect(provider_account).submit_deliverable(
-        args=[aid, "ipfs://deliverable-1", "API deployed, spec attached."]
+        args=[aid, "ipfs://deliverable-1", "API deployed, spec attached.", ""]
     ).transact()
     return aid
 

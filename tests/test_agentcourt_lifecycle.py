@@ -4,6 +4,8 @@ from gltest.assertions import tx_execution_succeeded, tx_execution_failed
 
 from conftest import (
     AMOUNT,
+    DELIVERY_WINDOW,
+    DISPUTE_WINDOW,
     CRITERIA,
     TERMS,
     agreement,
@@ -16,7 +18,7 @@ from conftest import (
 
 def test_create_agreement(court, client_account, provider_account):
     receipt = court.connect(client_account).create_agreement(
-        args=[provider_account.address, TERMS, CRITERIA, AMOUNT]
+        args=[provider_account.address, TERMS, CRITERIA, AMOUNT, DELIVERY_WINDOW, DISPUTE_WINDOW]
     ).transact()
     assert tx_execution_succeeded(receipt)
 
@@ -34,7 +36,7 @@ def test_create_agreement(court, client_account, provider_account):
 def test_create_agreement_rejects_self_dealing_and_zero_amount(court, client_account):
     assert tx_execution_failed(
         court.connect(client_account)
-        .create_agreement(args=[client_account.address, TERMS, CRITERIA, AMOUNT])
+        .create_agreement(args=[client_account.address, TERMS, CRITERIA, AMOUNT, DELIVERY_WINDOW, DISPUTE_WINDOW])
         .transact()
     )
 
@@ -42,7 +44,7 @@ def test_create_agreement_rejects_self_dealing_and_zero_amount(court, client_acc
 def test_create_agreement_rejects_zero_amount(court, client_account, provider_account):
     assert tx_execution_failed(
         court.connect(client_account)
-        .create_agreement(args=[provider_account.address, TERMS, CRITERIA, "0"])
+        .create_agreement(args=[provider_account.address, TERMS, CRITERIA, 0, DELIVERY_WINDOW, DISPUTE_WINDOW])
         .transact()
     )
 
@@ -118,7 +120,7 @@ def test_cancel_before_funding_only(court, client_account, provider_account):
 def test_submit_deliverable_by_provider(court, client_account, provider_account):
     aid = funded_agreement(court, client_account, provider_account)
     receipt = court.connect(provider_account).submit_deliverable(
-        args=[aid, "ipfs://cid-1", "Delivered all 3 endpoints."]
+        args=[aid, "ipfs://cid-1", "Delivered all 3 endpoints.", ""]
     ).transact()
     assert tx_execution_succeeded(receipt)
 
@@ -135,10 +137,10 @@ def test_submit_deliverable_rejects_unauthorized(
 ):
     aid = funded_agreement(court, client_account, provider_account)
     assert tx_execution_failed(
-        court.connect(client_account).submit_deliverable(args=[aid, "u", "n"]).transact()
+        court.connect(client_account).submit_deliverable(args=[aid, "u", "n", ""]).transact()
     )
     assert tx_execution_failed(
-        court.connect(stranger_account).submit_deliverable(args=[aid, "u", "n"]).transact()
+        court.connect(stranger_account).submit_deliverable(args=[aid, "u", "n", ""]).transact()
     )
     assert len(court.get_evidence(args=[aid]).call()) == 0
 
@@ -146,7 +148,7 @@ def test_submit_deliverable_rejects_unauthorized(
 def test_submit_deliverable_requires_funded_escrow(court, client_account, provider_account):
     aid = new_agreement(court, client_account, provider_account)
     assert tx_execution_failed(
-        court.connect(provider_account).submit_deliverable(args=[aid, "u", "n"]).transact()
+        court.connect(provider_account).submit_deliverable(args=[aid, "u", "n", ""]).transact()
     )
 
 
@@ -154,12 +156,12 @@ def test_submit_evidence_from_both_parties(court, client_account, provider_accou
     aid = delivered_agreement(court, client_account, provider_account)
     assert tx_execution_succeeded(
         court.connect(client_account)
-        .submit_evidence(args=[aid, "ipfs://client-log", "Endpoint 3 returns 500."])
+        .submit_evidence(args=[aid, "ipfs://client-log", "Endpoint 3 returns 500.", ""])
         .transact()
     )
     assert tx_execution_succeeded(
         court.connect(provider_account)
-        .submit_evidence(args=[aid, "ipfs://provider-log", "Endpoint 3 passes in CI."])
+        .submit_evidence(args=[aid, "ipfs://provider-log", "Endpoint 3 passes in CI.", ""])
         .transact()
     )
     evidence = court.get_evidence(args=[aid]).call()
@@ -173,10 +175,10 @@ def test_submit_evidence_rejects_unauthorized_and_empty(
 ):
     aid = delivered_agreement(court, client_account, provider_account)
     assert tx_execution_failed(
-        court.connect(stranger_account).submit_evidence(args=[aid, "u", "s"]).transact()
+        court.connect(stranger_account).submit_evidence(args=[aid, "u", "s", ""]).transact()
     )
     assert tx_execution_failed(
-        court.connect(client_account).submit_evidence(args=[aid, "  ", "  "]).transact()
+        court.connect(client_account).submit_evidence(args=[aid, "  ", "  ", ""]).transact()
     )
     assert len(court.get_evidence(args=[aid]).call()) == 1
 
