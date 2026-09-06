@@ -126,7 +126,7 @@ def test_settled_agreement_is_frozen(court, client_account, provider_account):
         court.connect(client_account).open_dispute(args=[aid, "again"]).transact()
     )
     assert tx_execution_failed(
-        court.connect(provider_account).submit_deliverable(args=[aid, "u", "n"]).transact()
+        court.connect(provider_account).submit_deliverable(args=[aid, "u", "n", ""]).transact()
     )
 
 

@@ -5,7 +5,7 @@ def test_dbg():
     a=get_accounts()
     f=get_contract_factory(contract_file_path=CONTRACT_PATH)
     c=f.deploy(args=[], account=a[1])
-    c.connect(a[1]).create_agreement(args=[a[2].address, TERMS, CRITERIA, AMOUNT]).transact()
+    c.connect(a[1]).create_agreement(args=[a[2].address, TERMS, CRITERIA, AMOUNT, 86400, 86400]).transact()
     aid=int(c.get_next_id(args=[]).call())-1
     r=c.connect(a[1]).fund_escrow(args=[aid]).transact(value=AMOUNT)
     import json

@@ -111,7 +111,7 @@ def new_agreement(court, client_account, provider_account, amount: int = AMOUNT)
     """create + read back the id (next_id - 1)."""
     as_client = court.connect(client_account)
     as_client.create_agreement(
-        args=[provider_account.address, TERMS, CRITERIA, amount]
+        args=[provider_account.address, TERMS, CRITERIA, amount, DELIVERY_WINDOW, DISPUTE_WINDOW]
     ).transact()
     return int(court.get_next_id(args=[]).call()) - 1
 
@@ -125,7 +125,7 @@ def funded_agreement(court, client_account, provider_account, amount: int = AMOU
 def delivered_agreement(court, client_account, provider_account, amount: int = AMOUNT) -> int:
     aid = funded_agreement(court, client_account, provider_account, amount)
     court.connect(provider_account).submit_deliverable(
-        args=[aid, "ipfs://deliverable-1", "API deployed, spec attached."]
+        args=[aid, "ipfs://deliverable-1", "API deployed, spec attached.", ""]
     ).transact()
     return aid
 
