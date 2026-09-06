@@ -4,6 +4,8 @@ from gltest.assertions import tx_execution_succeeded, tx_execution_failed
 
 from conftest import (
     AMOUNT,
+    DELIVERY_WINDOW,
+    DISPUTE_WINDOW,
     CRITERIA,
     TERMS,
     agreement,

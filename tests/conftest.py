@@ -27,6 +27,11 @@ AMOUNT = 10**17  # 0.1 GEN escrow used by most tests
 BPS = 10000
 APPEAL_BOND_BPS = 1000
 
+# deadlines (seconds)
+DELIVERY_WINDOW = 7 * 24 * 3600
+DISPUTE_WINDOW = 3 * 24 * 3600
+MIN_WINDOW = 3600
+
 # distinctive substring of _ADJUDICATION_PROMPT used to key the mocked answer
 PROMPT_KEY = "You are an impartial arbitrator"
 
@@ -107,11 +112,25 @@ def balance_of(account) -> int:
     return get_gl_client().get_balance(account.address)
 
 
-def new_agreement(court, client_account, provider_account, amount: int = AMOUNT) -> int:
+def new_agreement(
+    court,
+    client_account,
+    provider_account,
+    amount: int = AMOUNT,
+    delivery_window: int = DELIVERY_WINDOW,
+    dispute_window: int = DISPUTE_WINDOW,
+) -> int:
     """create + read back the id (next_id - 1)."""
     as_client = court.connect(client_account)
     as_client.create_agreement(
-        args=[provider_account.address, TERMS, CRITERIA, amount, DELIVERY_WINDOW, DISPUTE_WINDOW]
+        args=[
+            provider_account.address,
+            TERMS,
+            CRITERIA,
+            amount,
+            delivery_window,
+            dispute_window,
+        ]
     ).transact()
     return int(court.get_next_id(args=[]).call()) - 1
 
