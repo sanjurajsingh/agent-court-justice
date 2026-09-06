@@ -50,20 +50,25 @@ def verdict(winner: str, client_bps: int, reason: str = "Decided from the eviden
     return json.dumps({"winner": winner, "client_bps": client_bps, "reason": reason})
 
 
-def mocked_validators(count: int, response: str):
+def mocked_validators(count: int, response: str, web=None):
     """`count` identical validators that all return the same verdict."""
     factory = get_validator_factory()
-    return [
-        v.to_dict()
-        for v in factory.batch_create_mock_validators(
-            count,
-            mock_llm_response={"nondet_exec_prompt": {PROMPT_KEY: response}},
-        )
-    ]
+    kwargs = {"mock_llm_response": {"nondet_exec_prompt": {PROMPT_KEY: response}}}
+    if web is not None:
+        kwargs["mock_web_response"] = {"nondet_web_request": web}
+    return [v.to_dict() for v in factory.batch_create_mock_validators(count, **kwargs)]
+
+
+def web_mock(url: str, body: str, status: int = 200, method: str = "GET") -> dict:
+    return {url: {"method": method, "status": status, "body": body}}
+
+
+def sha256_hex(body: str) -> str:
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
 
 
 def disagreeing_validators(responses):
-    """One validator per response — used to break the Equivalence Principle."""
+    """One validator per response - used to break the Equivalence Principle."""
     factory = get_validator_factory()
     return [
         factory.create_mock_validator(
@@ -73,8 +78,18 @@ def disagreeing_validators(responses):
     ]
 
 
-def ctx(validators):
-    return {"validators": validators}
+def ctx(validators, genvm_datetime: str | None = None):
+    c = {"validators": validators}
+    if genvm_datetime is not None:
+        c["genvm_datetime"] = genvm_datetime
+    return c
+
+
+def at(offset_seconds: int) -> dict:
+    """Transaction context that runs the tx `offset_seconds` from now."""
+    when = datetime.now(timezone.utc) + timedelta(seconds=offset_seconds)
+    return {"genvm_datetime": when.strftime("%Y-%m-%dT%H:%M:%SZ")}
+
 
 
 @pytest.fixture(scope="session")
