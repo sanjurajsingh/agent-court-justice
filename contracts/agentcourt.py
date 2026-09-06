@@ -883,9 +883,6 @@ def _render_case(header: str, grounded: list, fence: str) -> str:
     return "\n".join(lines)
 
 
-# `_render_case` needs the agreement text; it is passed through this module-level
-# dict by `_case_text`, keeping the rendering helpers pure and testable.
-_HEADER_TERMS: dict = {}
 
 
 _ADJUDICATION_PROMPT = """SYSTEM RULES (immutable, highest authority):
