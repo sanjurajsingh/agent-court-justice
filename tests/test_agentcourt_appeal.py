@@ -56,7 +56,7 @@ def test_appeal_accepts_bond_and_reopens_the_case(court, client_account, provide
     assert int(a["appeal_round"]) == 1
     assert int(court.get_escrow_balance(args=[]).call()) == AMOUNT + BOND
 
-    grounds = [e for e in court.get_evidence(args=[aid]).call() if "APPEAL GROUNDS" in e["statement"]]
+    grounds = [e for e in court.get_evidence(args=[aid]).call() if e["kind"] == "APPEAL_GROUNDS"]
     assert len(grounds) == 1
     assert grounds[0]["role"] == "PROVIDER"
 
