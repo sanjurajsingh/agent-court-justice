@@ -39,8 +39,8 @@ function CreatePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { address, wrongNetwork } = useWallet();
-  const createTx = useTx();
-  const fundTx = useTx();
+  const createTx = useTx("create");
+  const fundTx = useTx("fund");
 
   const [provider, setProvider] = useState("");
   const [title, setTitle] = useState("");
@@ -48,6 +48,16 @@ function CreatePage() {
   const [criteria, setCriteria] = useState("");
   const [amount, setAmount] = useState("");
   const [agreementId, setAgreementId] = useState<number | null>(null);
+  const [deliveryDays, setDeliveryDays] = useState("7");
+  const [disputeDays, setDisputeDays] = useState("3");
+
+  const deliveryWindow = Math.round(Number(deliveryDays || "0") * 86400);
+  const disputeWindow = Math.round(Number(disputeDays || "0") * 86400);
+  const windowsValid =
+    deliveryWindow >= 3600 &&
+    deliveryWindow <= 365 * 86400 &&
+    disputeWindow >= 3600 &&
+    disputeWindow <= 90 * 86400;
 
   const ready = hasContract() && Boolean(address) && !wrongNetwork;
   const amountWei = (() => {
@@ -63,7 +73,8 @@ function CreatePage() {
     provider.trim().startsWith("0x") &&
     terms.trim().length > 0 &&
     criteria.trim().length > 0 &&
-    amountWei > 0n;
+    amountWei > 0n &&
+    windowsValid;
 
   async function onCreate() {
     await createTx.run(
@@ -74,6 +85,8 @@ function CreatePage() {
           terms: encodeTerms(title, terms),
           acceptanceCriteria: criteria.trim(),
           amountWei,
+          deliveryWindow,
+          disputeWindow,
         }),
       async () => {
         const next = Number(await getNextId());
@@ -176,6 +189,33 @@ function CreatePage() {
             = {amountWei.toString()} wei · funding must match this amount exactly.
           </p>
         </Field>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="Delivery window (days)">
+            <Input
+              value={deliveryDays}
+              onChange={(e) => setDeliveryDays(e.target.value)}
+              inputMode="decimal"
+              className="font-mono"
+            />
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              After funding, the provider has this long to deliver. Past the deadline the client can
+              reclaim the escrow on-chain. Minimum 1 hour, maximum 365 days.
+            </p>
+          </Field>
+          <Field label="Dispute window (days)">
+            <Input
+              value={disputeDays}
+              onChange={(e) => setDisputeDays(e.target.value)}
+              inputMode="decimal"
+              className="font-mono"
+            />
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              After delivery, the client has this long to dispute. Once it closes the provider can
+              claim the uncontested payment. Minimum 1 hour, maximum 90 days.
+            </p>
+          </Field>
+        </div>
 
         <div className="flex flex-wrap gap-3 border-t border-border pt-5">
           <Button onClick={() => void onCreate()} disabled={!canCreate || createTx.busy || agreementId !== null}>

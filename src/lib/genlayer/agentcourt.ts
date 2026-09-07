@@ -68,7 +68,12 @@ async function read<T>(functionName: string, args: unknown[] = []): Promise<T> {
   } as never)) as T;
 }
 
-async function write(functionName: string, args: unknown[] = [], value = 0n) {
+/**
+ * Submits a state-changing call and returns the transaction hash as soon as
+ * the wallet hands it over. Finality is reconciled separately by the pending
+ * transaction store, so a slow or interrupted client never loses the hash.
+ */
+async function write(functionName: string, args: unknown[] = [], value = 0n): Promise<string> {
   const client = await getWalletClient();
   const hash = await client.writeContract({
     address: contractAddress(),
@@ -76,8 +81,7 @@ async function write(functionName: string, args: unknown[] = [], value = 0n) {
     args,
     value,
   } as never);
-  const receipt = await client.waitForTransactionReceipt({ hash, status: "FINALIZED" } as never);
-  return { hash, receipt };
+  return String(hash);
 }
 
 /* ------------------------------- reads -------------------------------- */
@@ -88,6 +92,7 @@ export const getAgreementsFor = (address: string) =>
 export const getDecisions = (id: number) => read<Decision[]>("get_decisions", [id]);
 export const getEvidence = (id: number) => read<EvidenceItem[]>("get_evidence", [id]);
 export const getEscrowBalance = () => read<string>("get_escrow_balance");
+export const getLimits = () => read<Record<string, unknown>>("get_limits");
 
 /* ------------------------------- writes ------------------------------- */
 
@@ -96,20 +101,29 @@ export const createAgreement = (p: {
   terms: string;
   acceptanceCriteria: string;
   amountWei: bigint;
+  deliveryWindow: number;
+  disputeWindow: number;
 }) =>
   // The live schema types `amount` as int, so the wei value is passed as a bigint.
-  write("create_agreement", [p.provider, p.terms, p.acceptanceCriteria, p.amountWei]);
+  write("create_agreement", [
+    p.provider,
+    p.terms,
+    p.acceptanceCriteria,
+    p.amountWei,
+    p.deliveryWindow,
+    p.disputeWindow,
+  ]);
 
 export const fundEscrow = (id: number, amountWei: bigint) =>
   write("fund_escrow", [id], amountWei);
 
 export const cancelAgreement = (id: number) => write("cancel_agreement", [id]);
 
-export const submitDeliverable = (id: number, uri: string, note: string) =>
-  write("submit_deliverable", [id, uri, note]);
+export const submitDeliverable = (id: number, uri: string, note: string, contentHash = "") =>
+  write("submit_deliverable", [id, uri, note, contentHash]);
 
-export const submitEvidence = (id: number, uri: string, statement: string) =>
-  write("submit_evidence", [id, uri, statement]);
+export const submitEvidence = (id: number, uri: string, statement: string, contentHash = "") =>
+  write("submit_evidence", [id, uri, statement, contentHash]);
 
 export const acceptDeliverable = (id: number) => write("accept_deliverable", [id]);
 
@@ -123,7 +137,14 @@ export const appeal = (id: number, grounds: string, bondWei: bigint) =>
 
 export const settle = (id: number) => write("settle", [id]);
 
+/** Client recovers escrow after the delivery deadline passes with no delivery. */
+export const claimExpiry = (id: number) => write("claim_expiry", [id]);
+
+/** Provider is paid after the dispute window closes with no dispute. */
+export const claimUncontested = (id: number) => write("claim_uncontested", [id]);
+
 export const getNextId = () => read<string | number | bigint>("get_next_id");
+
 
 export const APPEAL_BOND_BPS = 1000;
 export const BPS = 10000;

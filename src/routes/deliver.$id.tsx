@@ -40,10 +40,11 @@ function DeliverPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { address, wrongNetwork } = useWallet();
-  const tx = useTx();
+  const tx = useTx(`deliver-${id}`);
 
   const [uri, setUri] = useState("");
   const [note, setNote] = useState("");
+  const [contentHash, setContentHash] = useState("");
 
   const { data: a } = useQuery({
     queryKey: ["agreement", numericId],
@@ -98,6 +99,20 @@ function DeliverPage() {
         </div>
 
         <div>
+          <Label className="text-eyebrow">Content hash (SHA-256, optional)</Label>
+          <Input
+            className="mt-2 font-mono"
+            value={contentHash}
+            onChange={(e) => setContentHash(e.target.value)}
+            placeholder="64 hex characters"
+          />
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            If you supply a hash, validators fetch the URI themselves and only treat the content as
+            validated when the hash matches. Otherwise it stays an unverified reference.
+          </p>
+        </div>
+
+        <div>
           <Label className="text-eyebrow">Statement</Label>
           <Textarea
             rows={6}
@@ -113,7 +128,7 @@ function DeliverPage() {
           onClick={() =>
             void tx.run(
               "submit_deliverable",
-              () => submitDeliverable(numericId, uri.trim(), note.trim()),
+              () => submitDeliverable(numericId, uri.trim(), note.trim(), contentHash.trim()),
               async () => {
                 await queryClient.invalidateQueries({ queryKey: ["agreement", numericId] });
                 await queryClient.invalidateQueries({ queryKey: ["evidence", numericId] });

@@ -47,13 +47,14 @@ function DisputePage() {
   const queryClient = useQueryClient();
   const { address, wrongNetwork } = useWallet();
 
-  const openTx = useTx();
-  const evidenceTx = useTx();
-  const adjudicateTx = useTx();
+  const openTx = useTx(`dispute-open-${id}`);
+  const evidenceTx = useTx(`dispute-evidence-${id}`);
+  const adjudicateTx = useTx(`dispute-adjudicate-${id}`);
 
   const [reason, setReason] = useState("");
   const [uri, setUri] = useState("");
   const [statement, setStatement] = useState("");
+  const [contentHash, setContentHash] = useState("");
 
   const enabled = hasContract() && Number.isFinite(numericId);
   const { data: a } = useQuery({
@@ -146,6 +147,19 @@ function DisputePage() {
               />
             </div>
             <div>
+              <Label className="text-eyebrow">Content hash (SHA-256, optional)</Label>
+              <Input
+                className="mt-2 font-mono"
+                value={contentHash}
+                onChange={(e) => setContentHash(e.target.value)}
+                placeholder="64 hex characters"
+              />
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                With a hash, validators fetch the source themselves and judge the verified content
+                rather than your description of it.
+              </p>
+            </div>
+            <div>
               <Label className="text-eyebrow">Statement</Label>
               <Textarea
                 rows={4}
@@ -160,10 +174,11 @@ function DisputePage() {
               onClick={() =>
                 void evidenceTx.run(
                   "submit_evidence",
-                  () => submitEvidence(numericId, uri.trim(), statement.trim()),
+                  () => submitEvidence(numericId, uri.trim(), statement.trim(), contentHash.trim()),
                   async () => {
                     setUri("");
                     setStatement("");
+                    setContentHash("");
                     await refresh();
                   },
                 )

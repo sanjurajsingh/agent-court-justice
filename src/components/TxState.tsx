@@ -5,7 +5,7 @@ import { shortAddress } from "@/lib/agreement-utils";
 
 const COPY: Record<Exclude<TxPhase, "idle">, string> = {
   confirming: "Waiting for wallet confirmation…",
-  pending: "Transaction submitted, awaiting GenLayer finality…",
+  pending: "Submitted and tracked, awaiting GenLayer finality (accepted is not final)…",
   success: "Finalized on-chain",
   error: "Transaction failed",
 };
