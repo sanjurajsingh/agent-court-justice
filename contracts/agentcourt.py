@@ -699,7 +699,22 @@ class AgentCourt(gl.Contract):
 # ---------------------------------------------------------------------------
 
 
+def _parse_ts(value: str) -> int:
+    """ISO-8601 block datetime -> unix seconds. Deterministic for validators."""
+    text = str(value).strip()
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(text)
+    except Exception:
+        raise gl.vm.UserError("invalid block datetime")
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return int(parsed.timestamp())
+
+
 def _bounded(value: str, limit: int, label: str) -> str:
+
     s = str(value)
     if len(s) > limit:
         raise gl.vm.UserError(label + " exceeds the maximum allowed length")
