@@ -283,6 +283,14 @@ def patch_server(pkg: Path) -> None:
     engine.vm._per_validator_llm_mocks = []"""
     assert old in s
     s = s.replace(old, new)
+
+    # 5. a warp must not leak into the next transaction: without an explicit
+    #    genvm_datetime the VM clock returns to wall clock.
+    old = """    if state._time_offset_seconds != 0:
+        engine.vm.warp(state.get_effective_datetime())"""
+    new = """    engine.vm.warp(state.get_effective_datetime())"""
+    assert old in s
+    s = s.replace(old, new)
     p.write_text(s)
 
 
