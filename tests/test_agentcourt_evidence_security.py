@@ -5,13 +5,13 @@ deterministic, but the contract's own retrieval, hashing, classification and
 size checks run for real, and every money assertion is a real balance delta.
 """
 
-import pytest
 from gltest.assertions import tx_execution_failed, tx_execution_succeeded
 
 from conftest import (
     AMOUNT,
     BPS,
     agreement,
+    balance_of,
     ctx,
     delivered_agreement,
     disputed_agreement,
@@ -332,7 +332,7 @@ def test_bond_is_counted_exactly_once_in_the_pot(court, client_account, provider
     d = agreement(court, aid)["decisions"][-1]
     assert int(d["client_award"]) + int(d["provider_award"]) == AMOUNT + bond
 
-    provider_before = __import__("conftest").balance_of(provider_account)
+    provider_before = balance_of(provider_account)
     court.settle(args=[aid]).transact()
-    assert __import__("conftest").balance_of(provider_account) == provider_before + AMOUNT + bond
+    assert balance_of(provider_account) == provider_before + AMOUNT + bond
     assert int(court.get_escrow_balance(args=[]).call()) == 0
