@@ -283,7 +283,38 @@ def patch_server(pkg: Path) -> None:
     engine.vm._per_validator_llm_mocks = []"""
     assert old in s
     s = s.replace(old, new)
+
+    # 5. a warp must not leak into the next transaction: without an explicit
+    #    genvm_datetime the VM clock returns to wall clock.
+    old = """    if state._time_offset_seconds != 0:
+        engine.vm.warp(state.get_effective_datetime())"""
+    new = """    engine.vm.warp(state.get_effective_datetime())"""
+    assert old in s
+    s = s.replace(old, new)
     p.write_text(s)
+
+
+def patch_vm(pkg: Path) -> None:
+    """gltest's direct VM never propagates a warp into ``gl.message_raw``.
+
+    A contract that reads deterministic block time (``gl.message_raw["datetime"]``,
+    the only clock available on-chain) therefore never sees ``genvm_datetime``,
+    which makes deadline behaviour untestable.
+    """
+    p = pkg.parent / "gltest" / "direct" / "vm.py"
+    s = p.read_text()
+    if MARKER in s:
+        return
+    old = """            if hasattr(gl, 'message_raw') and gl.message_raw is not None:
+                gl.message_raw['sender_address'] = sender
+                gl.message_raw['origin_address'] = origin"""
+    new = """            if hasattr(gl, 'message_raw') and gl.message_raw is not None:
+                %s
+                gl.message_raw['sender_address'] = sender
+                gl.message_raw['origin_address'] = origin
+                gl.message_raw['datetime'] = self._datetime""" % MARKER
+    assert old in s, "vm.py: unexpected source"
+    p.write_text(s.replace(old, new))
 
 
 def patch_consensus(pkg: Path) -> None:
@@ -345,6 +376,7 @@ def main() -> None:
     patch_state(pkg)
     patch_engine(pkg)
     patch_server(pkg)
+    patch_vm(pkg)
     patch_consensus(pkg)
     print(f"glsim patched at {pkg}")
 
