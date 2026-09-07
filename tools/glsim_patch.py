@@ -376,6 +376,7 @@ def main() -> None:
     patch_state(pkg)
     patch_engine(pkg)
     patch_server(pkg)
+    patch_vm(pkg)
     patch_consensus(pkg)
     print(f"glsim patched at {pkg}")
 
