@@ -228,8 +228,70 @@ async function reconcileOne(entry: PendingTx) {
 }
 
 function emitTerminal(result: TerminalResult) {
+  appendTxLog(result);
   terminalListeners.forEach((l) => l(result));
 }
+
+/* ----------------------- finalized transaction log ------------------- */
+
+export interface TxLogEntry {
+  account: string;
+  label: string;
+  scope: string;
+  hash: string;
+  status: string;
+  ok: boolean;
+  contract: string;
+  network: string;
+  submittedAt: number;
+  finalizedAt: number;
+  error?: string;
+}
+
+const LOG_KEY = "agentcourt.tx-log.v1";
+
+export function listTxLog(): TxLogEntry[] {
+  const s = storage();
+  if (!s) return [];
+  try {
+    const raw = s.getItem(LOG_KEY);
+    const parsed = raw ? (JSON.parse(raw) as TxLogEntry[]) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function clearTxLog() {
+  storage()?.removeItem(LOG_KEY);
+  listeners.forEach((l) => l());
+}
+
+function appendTxLog(result: TerminalResult) {
+  const s = storage();
+  if (!s) return;
+  const entry: TxLogEntry = {
+    account: result.entry.account,
+    label: result.entry.label,
+    scope: result.entry.scope,
+    hash: result.entry.hash,
+    status: result.status,
+    ok: result.ok,
+    contract: result.entry.contract,
+    network: result.entry.network,
+    submittedAt: result.entry.submittedAt,
+    finalizedAt: Date.now(),
+    ...(result.error ? { error: result.error } : {}),
+  };
+  try {
+    const next = [...listTxLog().filter((e) => e.hash !== entry.hash), entry];
+    s.setItem(LOG_KEY, JSON.stringify(next));
+  } catch {
+    /* storage unavailable, the pending store still holds the hash */
+  }
+  listeners.forEach((l) => l());
+}
+
 
 let timer: ReturnType<typeof setInterval> | null = null;
 let ticking = false;
