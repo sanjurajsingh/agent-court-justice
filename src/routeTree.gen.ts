@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as AgreementsIndexRouteImport } from './routes/agreements.index'
 import { Route as AgreementsIdRouteImport } from './routes/agreements.$id'
 import { Route as DeliverIdRouteImport } from './routes/deliver.$id'
@@ -30,6 +31,11 @@ const CreateRoute = CreateRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyRoute = VerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgreementsIndexRoute = AgreementsIndexRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
   '/dashboard': typeof DashboardRoute
+  '/verify': typeof VerifyRoute
   '/agreements/$id': typeof AgreementsIdRoute
   '/deliver/$id': typeof DeliverIdRoute
   '/dispute/$id': typeof DisputeIdRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
   '/dashboard': typeof DashboardRoute
+  '/verify': typeof VerifyRoute
   '/agreements/$id': typeof AgreementsIdRoute
   '/deliver/$id': typeof DeliverIdRoute
   '/dispute/$id': typeof DisputeIdRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/create': typeof CreateRoute
   '/dashboard': typeof DashboardRoute
+  '/verify': typeof VerifyRoute
   '/agreements/$id': typeof AgreementsIdRoute
   '/deliver/$id': typeof DeliverIdRoute
   '/dispute/$id': typeof DisputeIdRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/create'
     | '/dashboard'
+    | '/verify'
     | '/agreements/$id'
     | '/deliver/$id'
     | '/dispute/$id'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/create'
     | '/dashboard'
+    | '/verify'
     | '/agreements/$id'
     | '/deliver/$id'
     | '/dispute/$id'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/create'
     | '/dashboard'
+    | '/verify'
     | '/agreements/$id'
     | '/deliver/$id'
     | '/dispute/$id'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CreateRoute: typeof CreateRoute
   DashboardRoute: typeof DashboardRoute
+  VerifyRoute: typeof VerifyRoute
   AgreementsIdRoute: typeof AgreementsIdRoute
   DeliverIdRoute: typeof DeliverIdRoute
   DisputeIdRoute: typeof DisputeIdRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/verify': {
+      id: '/verify'
+      path: '/verify'
+      fullPath: '/verify'
+      preLoaderRoute: typeof VerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agreements/': {
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CreateRoute: CreateRoute,
   DashboardRoute: DashboardRoute,
+  VerifyRoute: VerifyRoute,
   AgreementsIdRoute: AgreementsIdRoute,
   DeliverIdRoute: DeliverIdRoute,
   DisputeIdRoute: DisputeIdRoute,
