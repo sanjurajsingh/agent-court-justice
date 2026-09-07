@@ -70,7 +70,7 @@ function AgreementDetail() {
     enabled,
   });
 
-  const tx = useTx();
+  const tx = useTx(`agreement-${id}`);
   const [grounds, setGrounds] = useState("");
 
   const a = agreementQuery.data;

@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { WalletProvider } from "@/hooks/useWallet";
 import { SiteFooter, SiteHeader } from "@/components/SiteHeader";
+import { onTerminal, startReconciler } from "@/lib/genlayer/tx-store";
 
 function NotFoundComponent() {
   return (
@@ -129,12 +130,26 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function TxReconciler() {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    startReconciler();
+    // Any write reaching a terminal status forces an authoritative re-read of
+    // agreement, evidence, decision and escrow state straight from the contract.
+    return onTerminal(() => {
+      void queryClient.invalidateQueries();
+    });
+  }, [queryClient]);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <WalletProvider>
+        <TxReconciler />
         <div className="flex min-h-screen flex-col bg-background">
           <SiteHeader />
           <main className="flex-1">
@@ -148,3 +163,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
