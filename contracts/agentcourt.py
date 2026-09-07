@@ -205,7 +205,8 @@ class AgentCourt(gl.Contract):
         return gl.message_raw["datetime"]
 
     def _now_ts(self) -> int:
-        return int(datetime.now(timezone.utc).timestamp())
+        """Deterministic block time every validator agrees on."""
+        return _parse_ts(self._now())
 
     def _pay(self, to: Address, amount: u256) -> None:
         if amount == u256(0):
@@ -780,7 +781,9 @@ def _ground(record: dict) -> dict:
         return dict(record, status=EV_UNAVAILABLE, content="", observed_hash="")
 
     body = getattr(res, "body", res)
-    status_code = int(getattr(res, "status_code", 200) or 200)
+    status_code = int(
+        getattr(res, "status_code", None) or getattr(res, "status", None) or 200
+    )
     if status_code >= 400:
         return dict(record, status=EV_UNAVAILABLE, content="", observed_hash="")
     if isinstance(body, str):
