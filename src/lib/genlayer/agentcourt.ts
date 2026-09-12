@@ -21,15 +21,27 @@ export interface Decision {
   client_award: string;
   provider_award: string;
   reason: string;
+  evidence_validated: number;
+  evidence_unavailable: number;
+  evidence_content_verified: number;
+  evidence_issuer_verified: number;
   decided_at: string;
 }
 
 export interface EvidenceItem {
   submitter: string;
   role: "CLIENT" | "PROVIDER";
-  kind: "DELIVERABLE" | "EVIDENCE";
+  kind: "DELIVERABLE" | "EVIDENCE" | "APPEAL_GROUNDS";
   uri: string;
   statement: string;
+  content_hash: string;
+  source: "NONE" | "FETCHABLE" | "UNSUPPORTED";
+  observed_hash: string;
+  content_hash_verified: boolean;
+  issuer_verified: boolean;
+  issuer_identity: string;
+  issuer_source: string;
+  validation_status: "ASSERTION_ONLY" | "REFERENCED" | "CONTENT_VERIFIED" | "UNAVAILABLE" | "INVALID";
   submitted_at: string;
 }
 
