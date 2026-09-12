@@ -8,10 +8,17 @@ a local JSON-RPC node on `http://127.0.0.1:4000/api`.
 ./scripts/run-contract-tests.sh tests/test_agentcourt_settlement.py -v
 ```
 
-The script installs `genlayer-test[sim]` into `~/glenv`, applies
+Prerequisites are Bash, `curl`, and Python 3.10+ with `venv` support. The same
+command works on macOS and Linux; `GLSIM_VENV`, `GLSIM_PORT`, and `GLSIM_LOG`
+may be set to override their defaults.
+
+The script creates or reuses `~/glenv`, installs `genlayer-test[sim]` and NumPy
+when missing, applies
 `tools/glsim_patch.py` (GLSim gaps: native value plumbing, `emit_transfer`
 payouts, contract-class cache, per-validator LLM mocks, in-place storage
-rollback on failed consensus), starts GLSim and runs `gltest`.
+rollback on failed consensus), downloads the pinned runner with checked errors,
+starts GLSim with five validators, waits for readiness, runs `gltest`, and then
+stops only the GLSim process it started. No GNU-only tools or Docker are used.
 
 Suites:
 
