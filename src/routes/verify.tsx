@@ -179,6 +179,12 @@ function VerifyPage() {
           `  ${i + 1}. ${e.kind} by ${e.role} ${e.submitter}` +
             `\n     uri: ${e.uri || "(none)"}` +
             `\n     content_hash: ${String(rec["content_hash"] ?? "")}` +
+            `\n     observed_hash: ${String(rec["observed_hash"] ?? "")}` +
+            `\n     validation_status: ${String(rec["validation_status"] ?? "")}` +
+            `\n     content_hash_verified: ${String(rec["content_hash_verified"] ?? false)}` +
+            `\n     issuer_verified: ${String(rec["issuer_verified"] ?? false)}` +
+            `\n     issuer_identity: ${String(rec["issuer_identity"] ?? "")}` +
+            `\n     issuer_source: ${String(rec["issuer_source"] ?? "")}` +
             `\n     source: ${String(rec["source"] ?? "")}` +
             `\n     statement: ${e.statement.slice(0, 240)}`,
         );
@@ -190,7 +196,7 @@ function VerifyPage() {
         lines.push(
           `  round ${d.round}: winner=${d.winner} client_bps=${d.client_bps} provider_bps=${d.provider_bps}` +
             `\n     client_award: ${gen(d.client_award)} GEN, provider_award: ${gen(d.provider_award)} GEN` +
-            `\n     evidence_validated=${String(rec["evidence_validated"] ?? "")} evidence_unavailable=${String(rec["evidence_unavailable"] ?? "")}` +
+            `\n     evidence_content_verified=${String(rec["evidence_content_verified"] ?? "")} evidence_issuer_verified=${String(rec["evidence_issuer_verified"] ?? "")} evidence_unavailable=${String(rec["evidence_unavailable"] ?? "")}` +
             `\n     reason: ${d.reason}`,
         );
       });
