@@ -252,7 +252,7 @@ class AgentCourt(gl.Contract):
                 source=_classify_source(clean_uri),
                 observed_hash="",
                 content_hash_verified=False,
-                issuer_verified=issuer[0],
+                issuer_verified=False,
                 issuer_identity=issuer[1],
                 issuer_source=issuer[2],
                 validation_status=initial_status,
@@ -529,7 +529,7 @@ class AgentCourt(gl.Contract):
                 "statement": str(e.statement),
                 "content_hash": str(e.content_hash),
                 "source": str(e.source),
-                "issuer_verified": bool(e.issuer_verified),
+                "issuer_verified": bool(e.issuer_identity),
                 "issuer_identity": str(e.issuer_identity),
                 "issuer_source": str(e.issuer_source),
                 "submitted_at": str(e.submitted_at),
@@ -859,35 +859,35 @@ def _ground(record: dict) -> dict:
     source = record["source"]
     declared = record["content_hash"]
     if source == SOURCE_NONE:
-        return dict(record, status=EV_ASSERTION, content="", observed_hash="", content_hash_verified=False)
+        return dict(record, status=EV_ASSERTION, content="", observed_hash="", content_hash_verified=False, issuer_verified=False)
     if source == SOURCE_UNSUPPORTED:
-        return dict(record, status=EV_REFERENCED, content="", observed_hash="", content_hash_verified=False)
+        return dict(record, status=EV_REFERENCED, content="", observed_hash="", content_hash_verified=False, issuer_verified=False)
     if declared == "":
-        return dict(record, status=EV_ASSERTION, content="", observed_hash="", content_hash_verified=False)
+        return dict(record, status=EV_ASSERTION, content="", observed_hash="", content_hash_verified=False, issuer_verified=False)
 
     url = _canonical_url(record["uri"])
     try:
         res = gl.nondet.web.get(url)
     except Exception:
-        return dict(record, status=EV_UNAVAILABLE, content="", observed_hash="", content_hash_verified=False)
+        return dict(record, status=EV_UNAVAILABLE, content="", observed_hash="", content_hash_verified=False, issuer_verified=False)
 
     body = getattr(res, "body", res)
     status_code = int(
         getattr(res, "status_code", None) or getattr(res, "status", None) or 200
     )
     if status_code >= 400:
-        return dict(record, status=EV_UNAVAILABLE, content="", observed_hash="", content_hash_verified=False)
+        return dict(record, status=EV_UNAVAILABLE, content="", observed_hash="", content_hash_verified=False, issuer_verified=False)
     if isinstance(body, str):
         raw = body.encode("utf-8")
     else:
         raw = bytes(body)
     observed = hashlib.sha256(raw).hexdigest()
     if declared != observed:
-        return dict(record, status=EV_INVALID, content="", observed_hash=observed, content_hash_verified=False)
+        return dict(record, status=EV_INVALID, content="", observed_hash=observed, content_hash_verified=False, issuer_verified=False)
     try:
         text = raw.decode("utf-8")
     except Exception:
-        return dict(record, status=EV_INVALID, content="", observed_hash=observed, content_hash_verified=False)
+        return dict(record, status=EV_INVALID, content="", observed_hash=observed, content_hash_verified=False, issuer_verified=False)
     return dict(
         record,
         status=EV_VALIDATED,
